@@ -27,4 +27,20 @@ public class EmailService {
             e.printStackTrace();
         }
     }
+
+
+    // Phương thức gửi mã OTP
+    public void sendOtpEmail(String toEmail, String otp) {
+        String subject = "Mã xác nhận OTP của bạn";
+        String body = "<h3>Xin chào!</h3>"
+                + "<p>Mã OTP của bạn là: <strong>" + otp + "</strong></p>"
+                + "<p>Vui lòng nhập mã này để xác nhận đăng ký.</p>";
+
+        Email email = new Email();
+        email.setToEmail(toEmail);
+        email.setSubJect(subject);
+        email.setBody(body);
+
+        sendEmail(email); // Gọi phương thức gửi email đã có
+    }
 }

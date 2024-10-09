@@ -53,8 +53,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.httpBasic().authenticationEntryPoint(restServicesEntryPoint());
 
         http.authorizeRequests()
-                .antMatchers("/", "/login").permitAll()
-                .antMatchers("/api/**").authenticated()  // Yêu cầu xác thực cho API
+                .antMatchers("/", "/login", "/api/users/register", "/api/users/verifyOtp", "/api/users/sendOtp"   ).permitAll() // Cho phép tất cả truy cập đến trang đăng ký
+                .antMatchers("/api/**").authenticated()  // Yêu cầu xác thực cho API khác
                 .anyRequest().authenticated();
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
@@ -63,6 +63,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // Không lưu session
         http.cors();
     }
+
 
 
 

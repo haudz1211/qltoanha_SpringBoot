@@ -82,9 +82,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import tdh.quanlytoanha.dtos.UserDTO;
 import tdh.quanlytoanha.security.UserPrinciple;
+import tdh.quanlytoanha.security.entities.Role;
 import tdh.quanlytoanha.security.entities.User;
+import tdh.quanlytoanha.security.repo.IRoleRepository;
 import tdh.quanlytoanha.security.repo.IUserRepository;
 
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
 
@@ -92,6 +95,8 @@ import java.util.Optional;
 public class UserService implements IUserService {
     @Autowired
     private IUserRepository userRepository;
+    @Autowired
+    private IRoleRepository roleRepository; // Tiêm IRoleRepository
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -107,8 +112,10 @@ public class UserService implements IUserService {
 
     @Override
     public User save(User user) {
+        // Mã hóa mật khẩu trước khi lưu
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        userRepository.save(user);
+        return user;
     }
 
     @Override
@@ -141,4 +148,49 @@ public class UserService implements IUserService {
     public List<User> findAllUsers() {
         return userRepository.findAll(); // Gọi phương thức findAll() từ repository
     }
+    // Triển khai phương thức lưu vai trò
+    @Override
+    public void saveRole(Role role) {
+        roleRepository.save(role); // Sử dụng roleRepository để lưu vai trò
+    }
+
+
+    @Override
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+
+
+    public String generateOtp() {
+        int otpLength = 6; // Độ dài mã OTP
+        SecureRandom random = new SecureRandom();
+        StringBuilder otp = new StringBuilder(otpLength);
+        for (int i = 0; i < otpLength; i++) {
+            otp.append(random.nextInt(10)); // Tạo số ngẫu nhiên từ 0 đến 9
+        }
+        return otp.toString();
+    }
+
+    // Phương thức lưu OTP nếu cần
+    public void storeOtp(String email, String otp) {
+        // Lưu OTP vào bộ nhớ tạm thời (có thể dùng Map hoặc một giải pháp khác)
+
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null); // Sử dụng Optional để xử lý giá trị không có
+    }
+
+
+//    @Override
+//    public boolean existsByEmail(String email) {
+//        return userRepository.existsByEmail(email); // Nếu bạn đã thêm phương thức này
+//    }
+    @Override
+    public boolean existsByEmail(String email) {
+        return userRepository.findByEmail(email).isPresent(); // Xác minh rằng userRepository đang hoạt động chính xác
+    }
+
 }

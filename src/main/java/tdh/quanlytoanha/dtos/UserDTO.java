@@ -13,4 +13,5 @@ public class UserDTO {
 
     @NotBlank(message = "Họ và tên không được để trống")
     private String fullName;
+    private String email; // Thêm trường email
 }

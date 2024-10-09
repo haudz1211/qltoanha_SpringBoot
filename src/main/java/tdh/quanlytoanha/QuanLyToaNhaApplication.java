@@ -51,16 +51,23 @@ public class QuanLyToaNhaApplication {
 
         // Kiểm tra null trước khi gọi isEmpty()
         if (users == null || users.isEmpty()) {
-            User admin = new User();
+            // Tạo và lưu Role trước
             Role roleAdmin = new Role();
             roleAdmin.setName("ROLE_ADMIN");
+            userService.saveRole(roleAdmin); // Lưu vai trò trước
+
+            // Tạo và lưu User sau khi Role đã được lưu
+            User admin = new User();
             admin.setFullName("Doan Hau");
             admin.setUsername("admin");
             admin.setPassword("123456");
-            admin.setRole(roleAdmin); // Chỉ định một role
-            userService.save(admin);
+            admin.setEmail("trinhdoanhauu@gmail.com");
+
+            admin.setRole(roleAdmin); // Gán role đã được lưu cho user
+            userService.save(admin); // Lưu user
         }
 
+        // Đảm bảo service entities được thêm đúng
         List<ServiceEntity> requiredServices = serviceRepository.findServiceEntitiesByRequired(1);
         if (requiredServices == null || requiredServices.isEmpty()) {
             ServiceEntity serviceEntity = new ServiceEntity();
@@ -78,6 +85,8 @@ public class QuanLyToaNhaApplication {
             serviceRepository.save(serviceEntity1);
         }
     }
+
+
 
 
     public static void main(String[] args) {
